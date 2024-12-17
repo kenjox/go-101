@@ -1,0 +1,12 @@
+@BASE_URL=http://localhost:8000
+### GET: /  Home route
+GET {{BASE_URL}}
+
+### Get: /snippet/view
+GET  {{BASE_URL}}/snippet/view/1
+
+### Create snippet form
+GET {{BASE_URL}}/snippet/create
+
+### Create new snippet
+POST {{BASE_URL}}/snippet/create
