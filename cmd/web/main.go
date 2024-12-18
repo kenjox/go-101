@@ -20,20 +20,9 @@ func main() {
 		logger: logger,
 	}
 
-	router := http.NewServeMux()
-	fileServer := http.FileServer(http.Dir("../../ui/static/"))
-
-	// Serve static files
-	router.Handle("GET /static/", http.StripPrefix("/static", fileServer))
-
-	router.HandleFunc("GET /{$}", app.home) // Restrict this route to exact matches on / only.”
-	router.HandleFunc("GET /snippet/view/{id}", app.viewSnippet)
-	router.HandleFunc("GET /snippet/create", app.newSnippetForm)
-	router.HandleFunc("POST /snippet/create", app.createSnippet)
-
 	logger.Info("Server running on port", "addr", *addr)
 
-	if error := http.ListenAndServe(*addr, router); error != nil {
+	if error := http.ListenAndServe(*addr, app.routes()); error != nil {
 		logger.Error(error.Error())
 		os.Exit(1)
 	}
