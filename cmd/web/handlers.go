@@ -8,8 +8,6 @@ import (
 )
 
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
-	w.Header().Add("Server", "Go")
-
 	files := []string{
 		"../../ui/html/pages/layout.tmpl",
 		"../../ui/html/partials/nav.tmpl",
@@ -47,5 +45,13 @@ func (app *application) newSnippetForm(w http.ResponseWriter, r *http.Request) {
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
+
+	id, err := app.snippets.Insert("Testing", "Testing content", 3)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 	w.Write([]byte("Saving snippet"))
 }
