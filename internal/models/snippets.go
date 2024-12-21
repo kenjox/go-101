@@ -2,8 +2,11 @@ package models
 
 import (
 	"database/sql"
+	"errors"
 	"time"
 )
+
+var ErrNoRecord = errors.New("model: no matching record found")
 
 type Snippet struct {
 	ID      int
@@ -36,14 +39,22 @@ func (m *SnippetModel) Insert(title, content string, expires int) (int, error) {
 }
 
 func (m *SnippetModel) GetById(id int) (Snippet, error) {
-	stmt := `SELECT * FROM snippets WHERE id = ?`
+	var s Snippet
 
-	_, err := m.DB.Query(stmt, id)
+	stmt := `
+	SELECT * FROM snippets 
+	WHERE expires > UTC_TIMESTAMP() AND id = ?`
+
+	err := m.DB.QueryRow(stmt, id).Scan(&s.ID, &s.Title, &s.Content, &s.Created, &s.Expires)
 	if err != nil {
-		return Snippet{}, err
+		if errors.Is(err, sql.ErrNoRows) {
+			return Snippet{}, ErrNoRecord
+		} else {
+			return Snippet{}, err
+		}
 	}
 
-	return Snippet{}, nil
+	return s, nil
 }
 
 func (m *SnippetModel) Latest() ([]Snippet, error) {
