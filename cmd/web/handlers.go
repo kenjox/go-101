@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"text/template"
 
 	"github.com/kenjox/snippetbox/internal/models"
 )
@@ -16,28 +17,28 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for _, snippet := range snippets {
-		fmt.Fprintf(w, "%+v\n", snippet)
+	files := []string{
+		"../../ui/html/pages/layout.tmpl",
+		"../../ui/html/partials/nav.tmpl",
+		"../../ui/html/pages/home.tmpl",
 	}
 
-	// files := []string{
-	// 	"../../ui/html/pages/layout.tmpl",
-	// 	"../../ui/html/partials/nav.tmpl",
-	// 	"../../ui/html/pages/home.tmpl",
-	// }
+	tmpl, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 
-	// tmpl, err := template.ParseFiles(files...)
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// 	return
-	// }
+	data := templateData{
+		Snippets: snippets,
+	}
 
-	// err = tmpl.ExecuteTemplate(w, "layout", nil)
+	err = tmpl.ExecuteTemplate(w, "layout", data)
 
-	// if err != nil {
-	// 	app.serverError(w, r, err)
-	// 	return
-	// }
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
 }
 
 func (app *application) viewSnippet(w http.ResponseWriter, r *http.Request) {
@@ -55,6 +56,28 @@ func (app *application) viewSnippet(w http.ResponseWriter, r *http.Request) {
 		} else {
 			app.serverError(w, r, err)
 		}
+		return
+	}
+
+	files := []string{
+		"../../ui/html/pages/layout.tmpl",
+		"../../ui/html/partials/nav.tmpl",
+		"../../ui/html/pages/view.tmpl",
+	}
+
+	tmpl, err := template.ParseFiles(files...)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
+	}
+
+	data := templateData{
+		Snippet: snippet,
+	}
+
+	err = tmpl.ExecuteTemplate(w, "layout", data)
+	if err != nil {
+		app.serverError(w, r, err)
 		return
 	}
 
