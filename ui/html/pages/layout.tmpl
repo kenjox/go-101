@@ -20,7 +20,10 @@
       {{template "nav" .}}
     </header>
     <main>{{template "main" .}}</main>
-    <footer>Kentech.dev</footer>
+    <footer>
+      Built with Go in {{.CurrentYear}} 
+    </footer>
+
     <script src="/static/js/main.js" type="text/javascript"></script>
   </body>
 </html>

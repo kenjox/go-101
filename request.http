@@ -3,7 +3,7 @@
 GET {{BASE_URL}}
 
 ### Get: /snippet/view
-GET  {{BASE_URL}}/snippet/view/1
+GET  {{BASE_URL}}/snippet/view/16
 
 ### Create snippet form
 GET {{BASE_URL}}/snippet/create
